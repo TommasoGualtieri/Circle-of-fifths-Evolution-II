@@ -3,58 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle of Fifths - Advanced Dashboard</title>
+    <title>Harmonic Dashboard Ultra Pro</title>
     <style>
         :root {
-            --primary-green: #66bb6a;
-            --dark-gray: #333;
-            --accent-gold: #ffca28;
-            --bg-light: #f4f7f6;
-            --white: #ffffff;
+            --primary: #66bb6a; --dark-bg: #f4f7f6; --card-bg: #ffffff;
+            --text: #333; --accent: #ffca28; --border: #eeeeee; --adv: #ce93d8;
         }
-
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-light); margin: 0; padding: 20px; color: var(--dark-gray); }
-        .dashboard { display: flex; max-width: 1400px; margin: 0 auto; gap: 20px; }
-
-        /* SIDEBAR SINISTRA */
-        .sidebar { width: 350px; display: flex; flex-direction: column; gap: 20px; }
-        .side-card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .side-card h3 { margin-top: 0; font-size: 1em; border-bottom: 2px solid var(--primary-green); padding-bottom: 8px; }
+        body.dark-mode {
+            --dark-bg: #121212; --card-bg: #1e1e1e; --text: #e0e0e0; --border: #333;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); margin: 0; padding: 20px; color: var(--text); transition: 0.3s; }
+        .dashboard { display: flex; max-width: 1600px; margin: 0 auto; gap: 20px; align-items: flex-start; }
         
-        .sig-list { font-size: 0.85em; }
-        .sig-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-        .sig-row.active { color: var(--primary-green); font-weight: bold; }
-        .sig-notes { color: #cc8e00; font-family: monospace; }
+        .sidebar { width: 350px; display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
+        .side-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.75em; }
+        .side-card h3 { margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 5px; font-size: 1.1em; color: var(--primary); }
 
-        /* TABELLA MEMO (MODI) */
-        .memo-table { width: 100%; border-collapse: collapse; font-size: 0.75em; margin-top: 10px; }
-        .memo-table th, .memo-table td { text-align: left; padding: 6px; border-bottom: 1px solid #eee; }
-        .memo-table th { color: #888; }
-
-        /* AREA CENTRALE */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
-        .circle-wrapper { position: relative; width: 460px; height: 460px; background: white; border-radius: 50%; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .circle-wrapper { position: relative; width: 440px; height: 440px; background: var(--card-bg); border-radius: 50%; margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
-        .note-btn {
-            position: absolute; width: 74px; height: 74px; margin: -37px;
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; background: var(--primary-green); color: white; border: 4px solid white;
-        }
-        .note-btn.active { background: var(--dark-gray); transform: scale(1.1); }
-        .degree-marker {
-            position: absolute; width: 24px; height: 24px; background: var(--accent-gold);
-            border-radius: 50%; font-size: 9px; font-weight: bold; color: white;
-            display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.5s;
-        }
+        .note-btn { position: absolute; width: 70px; height: 70px; margin: -35px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; background: var(--primary); color: white; border: 4px solid var(--card-bg); font-weight: bold; z-index: 5; }
+        .note-btn.active { background: #444; transform: scale(1.1); box-shadow: 0 0 15px var(--primary); }
+        .degree-marker { position: absolute; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; font-size: 9px; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; z-index: 10; border: 2px solid white; transition: 0.5s; }
 
-        /* TABELLE ARMONIZZAZIONE */
-        .info-card { width: 100%; background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .card-header { background: #f8f9fa; padding: 12px 20px; font-weight: bold; font-size: 0.9em; display: flex; justify-content: space-between; }
-        table.harm-table { width: 100%; border-collapse: collapse; }
-        .harm-table th { background: #fafafa; color: #aaa; font-size: 0.7em; padding: 8px; text-transform: uppercase; }
-        .harm-table td { padding: 12px; text-align: center; border-top: 1px solid #f0f0f0; font-weight: bold; width: 14.2%; }
-        .quad-row { background: #fffcf0; font-size: 0.9em; color: #a57c00; }
-        .row-label { font-size: 0.6em; color: #bbb; display: block; margin-bottom: 4px; }
+        .info-card { width: 100%; background: var(--card-bg); border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; }
+        .card-header { background: rgba(0,0,0,0.03); padding: 10px 20px; font-weight: bold; font-size: 0.9em; display: flex; justify-content: space-between; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { font-size: 0.7em; color: #888; padding: 5px; text-transform: uppercase; }
+        td { padding: 12px 2px; text-align: center; border-top: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        td:hover { background: rgba(102, 187, 106, 0.1); }
+        .chord-name { font-weight: bold; display: block; font-size: 1.1em; }
+        .chord-notes { font-size: 0.65em; color: var(--accent); font-family: monospace; display: block; margin-top: 3px; }
+        .row-label { font-size: 0.6em; color: #999; display: block; text-transform: uppercase; margin-bottom: 2px; }
+
+        .builder-card { width: 100%; background: var(--card-bg); border-radius: 12px; padding: 20px; border: 2px dashed var(--border); box-sizing: border-box; }
+        .prog-display { display: flex; gap: 10px; min-height: 60px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .prog-chord { background: var(--primary); color: white; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 0.9em; position: relative; animation: pop 0.3s ease; }
+        @keyframes pop { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
+        
+        .sug-section { border-top: 1px solid var(--border); padding-top: 15px; }
+        .sug-group { margin-bottom: 10px; }
+        .sug-group-title { font-size: 0.7em; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 8px; }
+        .sug-list { display: flex; gap: 8px; flex-wrap: wrap; }
+        .sug-btn { padding: 6px 12px; border-radius: 4px; border: 1px solid var(--primary); background: none; color: var(--primary); cursor: pointer; font-weight: bold; font-size: 0.75em; transition: 0.2s; }
+        .sug-btn:hover { background: var(--primary); color: white; }
+        
+        .sig-row { display: flex; justify-content: space-between; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
+        .sig-row.active { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
@@ -62,137 +58,206 @@
 <div class="dashboard">
     <div class="sidebar">
         <div class="side-card">
-            <h3>Tonalità e Alterazioni</h3>
-            <div id="sig-list" class="sig-list"></div>
+            <h3>Circolo delle Quinte</h3>
+            <div id="sig-list"></div>
+        </div>
+        
+        <div class="side-card">
+            <h3>Legenda Armonia Avanzata</h3>
+            <table style="text-align: left; font-size: 0.9em;">
+                <tr><td><b>SubV7</b></td><td>Sost. Tritono. Tensione cromatica. Jazz/Bossa.</td></tr>
+                <tr><td><b>V/V</b></td><td>Dom. Secondaria. Spinta verso la Dominante.</td></tr>
+                <tr><td><b>iv min</b></td><td>Scambio Modale. Malinconia (dal minore).</td></tr>
+                <tr><td><b>bVII7</b></td><td>Backdoor. Risoluzione alternativa al I.</td></tr>
+            </table>
         </div>
 
         <div class="side-card">
-            <h3>Memo: Gradi ed Intervalli</h3>
-            <table class="memo-table">
-                <thead><tr><th>Gr.</th><th>Accordo</th><th>Intervalli</th></tr></thead>
-                <tbody>
-                    <tr><td>I</td><td>Maj7</td><td>1, 3M, 5G, 7M</td></tr>
-                    <tr><td>ii</td><td>min7</td><td>1, 3m, 5G, 7m</td></tr>
-                    <tr><td>iii</td><td>min7</td><td>1, 3m, 5G, 7m</td></tr>
-                    <tr><td>IV</td><td>Maj7</td><td>1, 3M, 5G, 7M</td></tr>
-                    <tr><td>V</td><td>7 (Dom)</td><td>1, 3M, 5G, 7m</td></tr>
-                    <tr><td>vi</td><td>min7</td><td>1, 3m, 5G, 7m</td></tr>
-                    <tr><td>vii°</td><td>m7♭5</td><td>1, 3m, 5dim, 7m</td></tr>
-                </tbody>
+            <h3>Gradi ed Intervalli (Quadriadi)</h3>
+            <table style="width:100%; font-size:0.85em; text-align: left;">
+                <thead style="border-bottom: 1px solid #eee;">
+                    <tr><th>Grado</th><th>Tipo</th><th>Intervalli</th></tr>
+                </thead>
+                <tr><td><b>I</b></td><td>Maj7</td><td>1-3M-5G-7M</td></tr>
+                <tr><td><b>ii</b></td><td>m7</td><td>1-3m-5G-7m</td></tr>
+                <tr><td><b>iii</b></td><td>m7</td><td>1-3m-5G-7m</td></tr>
+                <tr><td><b>IV</b></td><td>Maj7</td><td>1-3M-5G-7M</td></tr>
+                <tr><td><b>V</b></td><td>7</td><td>1-3M-5G-7m</td></tr>
+                <tr><td><b>vi</b></td><td>m7</td><td>1-3m-5G-7m</td></tr>
+                <tr><td><b>vii°</b></td><td>m7b5</td><td>1-3m-5d-7m</td></tr>
             </table>
         </div>
     </div>
 
     <div class="main-content">
+        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 style="margin:0">Harmonic Dashboard Ultra Pro</h2>
+            <button onclick="document.body.classList.toggle('dark-mode')" style="cursor:pointer; border-radius:20px; padding:5px 15px; border:1px solid var(--border); background:var(--card-bg); color:var(--text);">🌓 Dark Mode</button>
+        </div>
+
         <div class="circle-wrapper" id="circle">
-            <div id="deg-0" class="degree-marker">I</div>
-            <div id="deg-1" class="degree-marker">ii</div>
-            <div id="deg-2" class="degree-marker">iii</div>
-            <div id="deg-3" class="degree-marker">IV</div>
-            <div id="deg-4" class="degree-marker">V</div>
-            <div id="deg-5" class="degree-marker">vi</div>
+            <div id="deg-0" class="degree-marker">I</div><div id="deg-1" class="degree-marker">ii</div>
+            <div id="deg-2" class="degree-marker">iii</div><div id="deg-3" class="degree-marker">IV</div>
+            <div id="deg-4" class="degree-marker">V</div><div id="deg-5" class="degree-marker">vi</div>
             <div id="deg-6" class="degree-marker">vii°</div>
         </div>
 
         <div class="info-card">
-            <div class="card-header"><span id="maj-title">--</span></div>
-            <table class="harm-table">
-                <thead><tr><th>I</th><th>ii</th><th>iii</th><th>IV</th><th>V</th><th>vi</th><th>vii°</th></tr></thead>
-                <tbody>
-                    <tr id="maj-triadi"></tr>
-                    <tr id="maj-quadriadi" class="quad-row"></tr>
-                </tbody>
+            <div class="card-header">
+                <span id="maj-label">Maggiore</span>
+                <small>Armonizzazione Diatonica</small>
+            </div>
+            <table>
+                <tr id="maj-tri"></tr>
+                <tr id="maj-quad" style="color:var(--primary); background: rgba(102,187,106,0.03)"></tr>
             </table>
         </div>
 
-        <div class="info-card">
-            <div class="card-header"><span id="min-title">--</span></div>
-            <table class="harm-table">
-                <thead><tr><th>i</th><th>ii°</th><th>III</th><th>iv</th><th>v</th><th>VI</th><th>VII</th></tr></thead>
-                <tbody>
-                    <tr id="min-triadi"></tr>
-                    <tr id="min-quadriadi" class="quad-row"></tr>
-                </tbody>
-            </table>
+        <div class="info-card" style="border-color: var(--adv);">
+            <div class="card-header" style="background:rgba(206,147,216,0.1); color:var(--adv)">
+                <span>Armonia Avanzata & Sostituzioni</span>
+                <small>Contesti Moderni</small>
+            </div>
+            <table><tr id="adv-row"></tr></table>
+        </div>
+
+        <div class="builder-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong>Progression Builder</strong>
+                <button onclick="clearProg()" style="font-size:0.7em; cursor:pointer; padding:2px 10px;">Reset</button>
+            </div>
+            <div class="prog-display" id="prog-display"></div>
+            
+            <div id="sug-container" class="sug-section" style="display:none;">
+                <div class="sug-group">
+                    <div class="sug-group-title">Cadenza Suggerita</div>
+                    <div class="sug-list" id="sug-cadenza"></div>
+                </div>
+                <div class="sug-group">
+                    <div class="sug-group-title">Sostituzioni/Jazz</div>
+                    <div class="sug-list" id="sug-jazz"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
     const data = [
-        { maj: "C", min: "Am", sig: "0", notes: ["C","D","E","F","G","A","B"], alts: "Nessuna" },
-        { maj: "G", min: "Em", sig: "1 ♯", notes: ["G","A","B","C","D","E","F♯"], alts: "F♯" },
-        { maj: "D", min: "Bm", sig: "2 ♯", notes: ["D","E","F♯","G","A","B","C♯"], alts: "F♯, C♯" },
-        { maj: "A", min: "F♯m", sig: "3 ♯", notes: ["A","B","C♯","D","E","F♯","G♯"], alts: "F♯, C♯, G♯" },
-        { maj: "E", min: "C♯m", sig: "4 ♯", notes: ["E","F♯","G♯","A","B","C♯","D♯"], alts: "F♯, C♯, G♯, D♯" },
-        { maj: "B", min: "G♯m", sig: "5 ♯", notes: ["B","C♯","D♯","E","F♯","G♯","A♯"], alts: "F♯, C♯, G♯, D♯, A♯" },
-        { maj: "G♭", min: "E♭m", sig: "6 ♭", notes: ["G♭","A♭","B♭","C♭","D♭","E♭","F"], alts: "B♭, E♭, A♭, D♭, G♭, C♭" },
-        { maj: "D♭", min: "B♭m", sig: "5 ♭", notes: ["D♭","E♭","F","G♭","A♭","B♭","C"], alts: "B♭, E♭, A♭, D♭, G♭" },
-        { maj: "A♭", min: "Fm", sig: "4 ♭", notes: ["A♭","B♭","C","D♭","E♭","F","G"], alts: "B♭, E♭, A♭, D♭" },
-        { maj: "E♭", min: "Cm", sig: "3 ♭", notes: ["E♭","F","G","A♭","B♭","C","D"], alts: "B♭, E♭, A♭" },
-        { maj: "B♭", min: "Gm", sig: "2 ♭", notes: ["B♭","C","D","E♭","F","G","A"], alts: "B♭, E♭" },
-        { maj: "F", min: "Dm", sig: "1 ♭", notes: ["F","G","A","B♭","C","D","E"], alts: "B♭" }
+        { maj: "C", min: "Am", notes: ["C","D","E","F","G","A","B"], alts: "♮" },
+        { maj: "G", min: "Em", notes: ["G","A","B","C","D","E","F♯"], alts: "F♯" },
+        { maj: "D", min: "Bm", notes: ["D","E","F♯","G","A","B","C♯"], alts: "F♯, C♯" },
+        { maj: "A", min: "F♯m", notes: ["A","B","C♯","D","E","F♯","G♯"], alts: "F♯, C♯, G♯" },
+        { maj: "E", min: "C♯m", notes: ["E","F♯","G♯","A","B","C♯","D♯"], alts: "F♯-D♯" },
+        { maj: "B", min: "G♯m", notes: ["B","C♯","D♯","E","F♯","G♯","A♯"], alts: "F♯-A♯" },
+        { maj: "G♭", min: "E♭m", notes: ["G♭","A♭","B♭","C♭","D♭","E♭","F"], alts: "6♭" },
+        { maj: "D♭", min: "B♭m", notes: ["D♭","E♭","F","G♭","A♭","B♭","C"], alts: "5♭" },
+        { maj: "A♭", min: "Fm", notes: ["A♭","B♭","C","D♭","E♭","F","G"], alts: "4♭" },
+        { maj: "E♭", min: "Cm", notes: ["E♭","F","G","A♭","B♭","C","D"], alts: "3♭" },
+        { maj: "B♭", min: "Gm", notes: ["B♭","C","D","E♭","F","G","A"], alts: "2♭" },
+        { maj: "F", min: "Dm", notes: ["F","G","A","B♭","C","D","E"], alts: "1♭" }
     ];
 
-    const circle = document.getElementById('circle');
-    const sigList = document.getElementById('sig-list');
+    const chromatic = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+    const majT = ["", "m", "m", "", "", "m", "°"];
+    const majQ = ["maj7", "m7", "m7", "maj7", "7", "m7", "m7♭5"];
 
-    // Inizializza UI
-    data.forEach((item, i) => {
-        const angle = (i * 30 - 90) * (Math.PI / 180);
-        const x = 230 + 170 * Math.cos(angle);
-        const y = 230 + 170 * Math.sin(angle);
+    function getSpelling(scale, idx, type) {
+        const r = scale[idx], t = scale[(idx+2)%7], f = scale[(idx+4)%7], s = scale[(idx+6)%7];
+        return type === 'tri' ? `${r}-${t}-${f}` : `${r}-${t}-${f}-${s}`;
+    }
 
-        const btn = document.createElement('div');
-        btn.className = 'note-btn';
-        btn.style.left = x + 'px'; btn.style.top = y + 'px';
-        btn.innerHTML = `<b>${item.maj}</b><small>${item.min}</small>`;
-        btn.onclick = () => update(i);
-        btn.id = `btn-${i}`;
-        circle.appendChild(btn);
+    function getNoteAt(keyIdx, semitones) {
+        let root = data[keyIdx].maj.replace('♭','b').replace('♯','#');
+        const map = {"Gb":"F#", "Db":"C#", "Ab":"G#", "Eb":"D#", "Bb":"A#", "Cb":"B", "Fb":"E"};
+        root = map[root] || root;
+        let startIdx = chromatic.indexOf(root.replace('b','#'));
+        return chromatic[(startIdx + semitones) % 12].replace('#', '♯');
+    }
 
-        const row = document.createElement('div');
-        row.className = 'sig-row';
-        row.id = `sig-${i}`;
-        row.innerHTML = `<span>${item.maj}</span><span class="sig-notes">${item.alts}</span>`;
-        row.onclick = () => update(i);
-        sigList.appendChild(row);
-    });
+    function init() {
+        data.forEach((item, i) => {
+            const angle = (i * 30 - 90) * (Math.PI / 180);
+            const x = 220 + 175 * Math.cos(angle), y = 220 + 175 * Math.sin(angle);
+            const btn = document.createElement('div');
+            btn.className = 'note-btn'; btn.style.left = x+'px'; btn.style.top = y+'px';
+            btn.innerHTML = `<b>${item.maj}</b><small>${item.min}</small>`;
+            btn.onclick = () => update(i); btn.id = 'btn-'+i;
+            document.getElementById('circle').appendChild(btn);
+
+            const row = document.createElement('div');
+            row.className = 'sig-row'; row.id = 'sig-'+i;
+            row.innerHTML = `<span><b>${item.maj}</b> / ${item.min}</span><span style="color:var(--accent)">${item.alts}</span>`;
+            row.onclick = () => update(i);
+            document.getElementById('sig-list').appendChild(row);
+        });
+        update(0);
+    }
 
     function update(idx) {
         const s = data[idx];
         document.querySelectorAll('.note-btn, .sig-row').forEach(el => el.classList.remove('active'));
-        document.getElementById(`btn-${idx}`).classList.add('active');
-        document.getElementById(`sig-${idx}`).classList.add('active');
+        document.getElementById('btn-'+idx).classList.add('active');
+        document.getElementById('sig-'+idx).classList.add('active');
 
-        // Sposta gradi
-        const offsets = [0, 2, 4, -1, 1, 3, 5]; 
-        offsets.forEach((offset, i) => {
+        [0, 2, 4, -1, 1, 3, 5].forEach((offset, i) => {
             const pos = (idx + offset + 12) % 12;
             const angle = (pos * 30 - 90) * (Math.PI / 180);
-            const r = 120;
-            const dot = document.getElementById(`deg-${i}`);
-            dot.style.left = (230 + r * Math.cos(angle) - 12) + 'px';
-            dot.style.top = (230 + r * Math.sin(angle) - 12) + 'px';
+            const dot = document.getElementById('deg-'+i);
+            dot.style.left = (220 + 120 * Math.cos(angle) - 11) + 'px';
+            dot.style.top = (220 + 120 * Math.sin(angle) - 11) + 'px';
         });
 
-        // Aggiorna Tabelle
-        const majT = ["", "m", "m", "", "", "m", "°"];
-        const majQ = ["maj7", "m7", "m7", "maj7", "7", "m7", "m7♭5"];
-        const minT = ["m", "°", "", "m", "m", "", ""];
-        const minQ = ["m7", "m7♭5", "maj7", "m7", "m7", "maj7", "7"];
+        document.getElementById('maj-label').innerText = s.maj + " Maggiore";
+        document.getElementById('maj-tri').innerHTML = s.notes.map((n, i) => `<td onclick="addChord('${n}${majT[i]}', ${i})"><span class="row-label">Triade</span><span class="chord-name">${n}${majT[i]}</span><span class="chord-notes">${getSpelling(s.notes, i, 'tri')}</span></td>`).join('');
+        document.getElementById('maj-quad').innerHTML = s.notes.map((n, i) => `<td onclick="addChord('${n}${majQ[i]}', ${i})"><span class="row-label">Quad.</span><span class="chord-name">${n}${majQ[i]}</span><span class="chord-notes">${getSpelling(s.notes, i, 'quad')}</span></td>`).join('');
 
-        document.getElementById('maj-title').innerText = `${s.maj} Maggiore (Note: ${s.alts})`;
-        document.getElementById('maj-triadi').innerHTML = s.notes.map((n, i) => `<td><span class="row-label">Triade</span>${n}${majT[i]}</td>`).join('');
-        document.getElementById('maj-quadriadi').innerHTML = s.notes.map((n, i) => `<td><span class="row-label">Quadriade</span>${n}${majQ[i]}</td>`).join('');
-
-        const minNotes = [...s.notes.slice(5), ...s.notes.slice(0, 5)];
-        document.getElementById('min-title').innerText = `${s.min} Naturale (Note: ${s.alts})`;
-        document.getElementById('min-triadi').innerHTML = minNotes.map((n, i) => `<td><span class="row-label">Triade</span>${n}${minT[i]}</td>`).join('');
-        document.getElementById('min-quadriadi').innerHTML = minNotes.map((n, i) => `<td><span class="row-label">Quadriade</span>${n}${minQ[i]}</td>`).join('');
+        const v2 = getNoteAt(idx, 9) + "7", v5 = getNoteAt(idx, 2) + "7", sub = getNoteAt(idx, 1) + "7", ivm = getNoteAt(idx, 5) + "m7", b7 = getNoteAt(idx, 10) + "7";
+        document.getElementById('adv-row').innerHTML = `
+            <td onclick="addChord('${v2}', -1)"><span class="row-label">V / ii</span><b>${v2}</b></td>
+            <td onclick="addChord('${v5}', -1)"><span class="row-label">V / V</span><b>${n=v5}</b></td>
+            <td onclick="addChord('${sub}', -1)"><span class="row-label">SubV7</span><b>${sub}</b></td>
+            <td onclick="addChord('${ivm}', -1)"><span class="row-label">iv min</span><b>${ivm}</b></td>
+            <td onclick="addChord('${b7}', -1)"><span class="row-label">bVII7</span><b>${b7}</b></td>`;
     }
 
-    update(0);
+    // Logic Builder Potenziato
+    const advancedLogic = {
+        0: { cad: [{d:3, t:"IV (Plagale)"}, {d:4, t:"V (Sospesa)"}], jazz: [{d:1, t:"ii-7 (Jazz Prep)"}, {d:5, t:"vi-7 (Relative)"}] },
+        1: { cad: [{d:4, t:"V7 (Perfect Prep)"}], jazz: [{d:6, t:"viiø (Leading)"}, {d:0, t:"Imaj7 (II-V-I)"}] },
+        3: { cad: [{d:4, t:"V7 (Dominante)"}, {d:0, t:"I (Risoluzione)"}], jazz: [{d:1, t:"ii-7 (Subdominant)"}] },
+        4: { cad: [{d:0, t:"I (Perfetta)"}, {d:5, t:"vi (Inganno)"}], jazz: [{d:1, t:"ii-7 (Turnaround)"}] },
+        5: { cad: [{d:1, t:"ii (Circle of 5ths)"}, {d:3, t:"IV (Pop)"}], jazz: [{d:4, t:"V7 (Dominant)"}] }
+    };
+
+    function addChord(name, deg) {
+        const d = document.getElementById('prog-display');
+        const c = document.createElement('div'); c.className = 'prog-chord'; c.innerText = name;
+        d.appendChild(c);
+        
+        const currentScale = data.find(d => d.maj === document.querySelector('.note-btn.active b').innerText).notes;
+        const sBox = document.getElementById('sug-container');
+        const sCad = document.getElementById('sug-cadenza');
+        const sJaz = document.getElementById('sug-jazz');
+
+        if(deg === -1 || !advancedLogic[deg]) { sBox.style.display = 'none'; return; }
+        
+        sBox.style.display = 'block';
+        sCad.innerHTML = ''; sJaz.innerHTML = '';
+
+        advancedLogic[deg].cad.forEach(opt => sCad.appendChild(createSugBtn(currentScale[opt.d] + majQ[opt.d], opt.t, opt.d)));
+        advancedLogic[deg].jazz.forEach(opt => sJaz.appendChild(createSugBtn(currentScale[opt.d] + majQ[opt.d], opt.t, opt.d)));
+    }
+
+    function createSugBtn(name, label, deg) {
+        const btn = document.createElement('button'); btn.className = 'sug-btn';
+        btn.innerHTML = `${name} <br><span style="font-size:0.7em; font-weight:normal; opacity:0.7">${label}</span>`;
+        btn.onclick = () => addChord(name, deg);
+        return btn;
+    }
+
+    function clearProg() { document.getElementById('prog-display').innerHTML = ''; document.getElementById('sug-container').style.display = 'none'; }
+    init();
 </script>
 </body>
 </html>
