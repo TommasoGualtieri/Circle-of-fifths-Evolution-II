@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmonic Dashboard Ultra - Pro Audio Edition</title>
+    <title>Harmonic Dashboard Ultra - Pro Audio Fix</title>
     <style>
         :root {
             --primary: #66bb6a; --dark-bg: #f4f7f6; --card-bg: #ffffff;
@@ -12,37 +12,44 @@
         body.dark-mode {
             --dark-bg: #121212; --card-bg: #1e1e1e; --text: #e0e0e0; --border: #333;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); margin: 0; padding: 20px; color: var(--text); transition: 0.3s; }
-        .dashboard { display: flex; max-width: 1600px; margin: 0 auto; gap: 20px; align-items: flex-start; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); margin: 0; padding: 20px; color: var(--text); transition: 0.3s; line-height: 1.4; }
         
-        .sidebar { width: 320px; display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
-        .side-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); font-size: 0.8em; }
-        .side-card h3 { margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 5px; font-size: 1.1em; color: var(--primary); }
+        .dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        
+        /* Sidebar */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .side-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .side-card h3 { margin: 0 0 10px 0; font-size: 1.1em; color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .side-card p { font-size: 0.85em; margin: 5px 0; }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
-        .circle-wrapper { position: relative; width: 440px; height: 440px; background: var(--card-bg); border-radius: 50%; margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        /* Main Content */
+        .main-content { display: flex; flex-direction: column; gap: 20px; align-items: center; }
         
-        .note-btn { position: absolute; width: 70px; height: 70px; margin: -35px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; background: var(--primary); color: white; border: 4px solid var(--card-bg); font-weight: bold; }
-        .note-btn.active { background: #444; transform: scale(1.1); box-shadow: 0 0 10px var(--primary); }
-        .degree-marker { position: absolute; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; font-size: 9px; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; z-index: 10; border: 2px solid white; transition: 0.5s; }
+        /* Circolo delle Quinte */
+        .circle-container { position: relative; width: 450px; height: 450px; background: var(--card-bg); border-radius: 50%; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .note-btn { position: absolute; width: 60px; height: 60px; margin: -30px; border-radius: 50%; border: 3px solid var(--card-bg); background: var(--primary); color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 5; }
+        .note-btn.active { background: #333; transform: scale(1.15); box-shadow: 0 0 15px var(--primary); }
+        .deg-marker { position: absolute; width: 24px; height: 24px; background: var(--accent); border-radius: 50%; color: white; font-size: 0.7em; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid white; z-index: 10; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .info-card { width: 100%; background: var(--card-bg); border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; }
-        .card-header { background: rgba(0,0,0,0.03); padding: 10px 20px; font-weight: bold; font-size: 0.9em; display: flex; justify-content: space-between; }
-        
+        /* Tabelle */
+        .info-card { width: 100%; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .card-header { background: rgba(0,0,0,0.03); padding: 10px 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        td { padding: 10px 2px; text-align: center; border-top: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        td { padding: 15px 5px; text-align: center; cursor: pointer; border-right: 1px solid var(--border); transition: 0.2s; }
+        td:last-child { border-right: none; }
         td:hover { background: rgba(102, 187, 106, 0.1); }
-        .chord-name { font-weight: bold; display: block; font-size: 1em; }
-        .chord-notes { font-size: 0.65em; color: var(--accent); font-family: monospace; display: block; margin-top: 3px; }
-        .row-label { font-size: 0.55em; color: #999; display: block; text-transform: uppercase; }
+        .ch-name { display: block; font-weight: bold; font-size: 1.1em; margin-bottom: 4px; }
+        .ch-notes { display: block; font-size: 0.7em; color: var(--accent); font-family: monospace; }
+        .ch-label { display: block; font-size: 0.6em; color: #999; text-transform: uppercase; margin-bottom: 2px; }
 
-        .builder-card { width: 100%; background: var(--card-bg); border-radius: 12px; padding: 20px; border: 2px dashed var(--border); box-sizing: border-box; }
-        .prog-display { display: flex; gap: 10px; min-height: 60px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
-        .prog-chord { background: var(--primary); color: white; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 0.9em; cursor: pointer; }
+        /* Builder */
+        .builder { width: 100%; background: var(--card-bg); padding: 20px; border-radius: 12px; border: 2px dashed var(--primary); box-sizing: border-box; }
+        .prog-row { display: flex; gap: 10px; flex-wrap: wrap; min-height: 50px; margin: 15px 0; }
+        .chord-box { background: var(--primary); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; animation: popIn 0.3s; }
+        @keyframes popIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
         
-        .controls { display: flex; gap: 10px; margin-top: 10px; }
-        button { padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; background: var(--card-bg); color: var(--text); }
-        .btn-play { background: var(--primary); color: white; border: none; font-weight: bold; }
+        button.action { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; background: var(--primary); color: white; margin-right: 10px; }
+        button.clear { background: #ef5350; }
     </style>
 </head>
 <body>
@@ -51,159 +58,186 @@
     <div class="sidebar">
         <div class="side-card">
             <h3>Legenda Avanzata</h3>
-            <p><b>SubV7:</b> Sost. Tritono. Tensione Jazz.</p>
+            <p><b>SubV7:</b> Sostituzione Tritono.</p>
             <p><b>V/ii:</b> Dominante secondaria.</p>
-            <p><b>iv min:</b> Scambio modale (Eolio).</p>
-            <p><b>bVII7:</b> Risoluzione Backdoor.</p>
+            <p><b>iv min:</b> Scambio modale.</p>
+            <p><b>bVII7:</b> Backdoor chord.</p>
         </div>
         <div class="side-card">
-            <h3>Gradi & Intervalli</h3>
-            <table style="font-size: 0.8em; text-align: left;">
-                <tr><td>I</td><td>Maj7</td><td>1-3-5-7</td></tr>
-                <tr><td>ii</td><td>m7</td><td>1-b3-5-b7</td></tr>
-                <tr><td>V</td><td>7</td><td>1-3-5-b7</td></tr>
-                <tr><td>vii°</td><td>m7b5</td><td>1-b3-b5-b7</td></tr>
-            </table>
+            <h3>Gradi ed Intervalli</h3>
+            <p><b>I:</b> Maj7 (1-3-5-7)</p>
+            <p><b>ii:</b> m7 (1-b3-5-b7)</p>
+            <p><b>V:</b> 7 (1-3-5-b7)</p>
+            <p><b>vii°:</b> m7b5 (1-b3-b5-b7)</p>
         </div>
+        <button class="action" onclick="document.body.classList.toggle('dark-mode')" style="width: 100%;">🌓 Inverti Tema</button>
     </div>
 
     <div class="main-content">
-        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0">Harmonic Dashboard Ultra + Audio</h2>
-            <button onclick="document.body.classList.toggle('dark-mode')">🌓 Dark Mode</button>
-        </div>
-
-        <div class="circle-wrapper" id="circle">
-            <div id="deg-0" class="degree-marker">I</div><div id="deg-1" class="degree-marker">ii</div>
-            <div id="deg-2" class="degree-marker">iii</div><div id="deg-3" class="degree-marker">IV</div>
-            <div id="deg-4" class="degree-marker">V</div><div id="deg-5" class="degree-marker">vi</div>
-            <div id="deg-6" class="degree-marker">vii°</div>
-        </div>
-
-        <div class="info-card">
-            <div class="card-header"><span id="maj-label">Maggiore</span></div>
-            <table><tr id="maj-tri"></tr><tr id="maj-quad"></tr></table>
+        <div class="circle-container" id="circle">
+            <div id="m-0" class="deg-marker">I</div>
+            <div id="m-1" class="deg-marker">ii</div>
+            <div id="m-2" class="deg-marker">iii</div>
+            <div id="m-3" class="deg-marker">IV</div>
+            <div id="m-4" class="deg-marker">V</div>
+            <div id="m-5" class="deg-marker">vi</div>
+            <div id="m-6" class="deg-marker">vii°</div>
         </div>
 
         <div class="info-card">
-            <div class="card-header"><span id="min-label">Minore Naturale</span></div>
-            <table><tr id="min-tri"></tr><tr id="min-quad"></tr></table>
+            <div class="card-header" id="maj-title">Scala Maggiore</div>
+            <table>
+                <tr id="maj-tri-row"></tr>
+                <tr id="maj-quad-row"></tr>
+            </table>
         </div>
 
-        <div class="info-card" style="border-color: var(--adv);">
-            <div class="card-header" style="color:var(--adv)">Armonia Avanzata</div>
-            <table><tr id="adv-row"></tr></table>
+        <div class="info-card">
+            <div class="card-header" id="min-title">Scala Minore Naturale</div>
+            <table>
+                <tr id="min-tri-row"></tr>
+                <tr id="min-quad-row"></tr>
+            </table>
         </div>
 
-        <div class="builder-card">
+        <div class="builder">
             <strong>Progression Builder</strong>
-            <div class="prog-display" id="prog-display"></div>
-            <div class="controls">
-                <button class="btn-play" onclick="playProgression()">▶ Play Progression</button>
-                <button onclick="clearProg()">Clear</button>
-            </div>
+            <div class="prog-row" id="prog-display"></div>
+            <button class="action" onclick="playProgression()">▶ Riproduci Sequenza</button>
+            <button class="action clear" onclick="clearProg()">Svuota</button>
         </div>
     </div>
 </div>
 
 <script>
+    // Configurazione Audio
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const frequencies = {"C":261.63,"C♯":277.18,"D":293.66,"D♯":311.13,"E":329.63,"F":349.23,"F♯":369.99,"G":392.00,"G♯":415.30,"A":440.00,"A♯":466.16,"B":493.88,"C2":523.25};
-    
+    const freqs = {
+        "C": 261.63, "C#": 277.18, "D": 293.66, "D#": 311.13, "E": 329.63, "F": 349.23,
+        "F#": 369.99, "G": 392.00, "G#": 415.30, "A": 440.00, "A#": 466.16, "B": 493.88,
+        "C2": 523.25, "D2": 587.33, "E2": 659.25, "F2": 698.46, "G2": 783.99, "A2": 880.00, "B2": 987.77
+    };
+
     const data = [
-        { maj: "C", min: "Am", notes: ["C","D","E","F","G","A","B"] },
-        { maj: "G", min: "Em", notes: ["G","A","B","C","D","E","F♯"] },
-        { maj: "D", min: "Bm", notes: ["D","E","F♯","G","A","B","C♯"] },
-        { maj: "A", min: "F♯m", notes: ["A","B","C♯","D","E","F♯","G♯"] },
-        { maj: "E", min: "C♯m", notes: ["E","F♯","G♯","A","B","C♯","D♯"] },
-        { maj: "B", min: "G♯m", notes: ["B","C♯","D♯","E","F♯","G♯","A♯"] },
-        { maj: "F", min: "Dm", notes: ["F","G","A","B♭","C","D","E"] }
+        { name: "C", notes: ["C","D","E","F","G","A","B"] },
+        { name: "G", notes: ["G","A","B","C","D","E","F#"] },
+        { name: "D", notes: ["D","E","F#","G","A","B","C#"] },
+        { name: "A", notes: ["A","B","C#","D","E","F#","G#"] },
+        { name: "E", notes: ["E","F#","G#","A","B","C#","D#"] },
+        { name: "B", notes: ["B","C#","D#","E","F#","G#","A#"] },
+        { name: "Gb", notes: ["F#","G#","A#","B","C#","D#","F"] },
+        { name: "Db", notes: ["C#","D#","F","F#","G#","A#","C"] },
+        { name: "Ab", notes: ["G#","A#","C","C#","D#","F","G"] },
+        { name: "Eb", notes: ["D#","F","G","G#","A#","C","D"] },
+        { name: "Bb", notes: ["A#","C","D","D#","F","G","A"] },
+        { name: "F", notes: ["F","G","A","A#","C","D","E"] }
     ];
 
-    const majT = ["", "m", "m", "", "", "m", "°"];
-    const majQ = ["maj7", "m7", "m7", "maj7", "7", "m7", "m7b5"];
+    const typesMajT = ["", "m", "m", "", "", "m", "°"];
+    const typesMajQ = ["maj7", "m7", "m7", "maj7", "7", "m7", "m7b5"];
     let currentKey = 0;
     let progression = [];
 
-    function playNote(freq, start, dur) {
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, start);
-        g.gain.setValueAtTime(0.15, start);
-        g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
-        osc.connect(g); g.connect(audioCtx.destination);
-        osc.start(start); osc.stop(start + dur);
-    }
-
-    function playChordAudio(notesArray) {
+    // Funzione Audio
+    function playChord(notes) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const now = audioCtx.currentTime;
-        notesArray.forEach(n => {
-            const f = frequencies[n.replace('♭','♯')] || frequencies[n[0]];
-            playNote(f, now, 1.5);
+        notes.forEach((note, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            let f = freqs[note.replace('b', '#')] || freqs[note[0]];
+            if (i > 0 && f < freqs[notes[0]]) f *= 2; // Ottava superiore per le estensioni
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+            
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 1.5);
         });
     }
 
-    function getChordNotes(scale, rootIdx, type) {
-        const indices = type === 'tri' ? [0, 2, 4] : [0, 2, 4, 6];
-        return indices.map(i => scale[(rootIdx + i) % 7]);
+    // Inizializzazione Circolo
+    function init() {
+        const circle = document.getElementById('circle');
+        data.forEach((item, i) => {
+            const angle = (i * 30 - 90) * (Math.PI / 180);
+            const x = 225 + 185 * Math.cos(angle);
+            const y = 225 + 185 * Math.sin(angle);
+            const btn = document.createElement('button');
+            btn.className = 'note-btn';
+            btn.id = 'btn-' + i;
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            btn.innerText = item.name;
+            btn.onclick = () => update(i);
+            circle.appendChild(btn);
+        });
+        update(0);
     }
 
     function update(idx) {
         currentKey = idx;
-        const s = data[idx];
-        document.querySelectorAll('.note-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+        const key = data[idx];
+        
+        // Update pulsanti attivi
+        document.querySelectorAll('.note-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-'+idx).classList.add('active');
 
-        // Markers
-        [0, 2, 4, -1, 1, 3, 5].forEach((offset, i) => {
+        // Sposta marcatori gradi
+        const degOffsets = [0, 2, 4, -1, 1, 3, 5]; // Posizioni relative sul circolo
+        degOffsets.forEach((offset, i) => {
             const pos = (idx + offset + 12) % 12;
             const angle = (pos * 30 - 90) * (Math.PI / 180);
-            const dot = document.getElementById('deg-'+i);
-            dot.style.left = (220 + 120 * Math.cos(angle) - 11) + 'px';
-            dot.style.top = (220 + 120 * Math.sin(angle) - 11) + 'px';
+            const marker = document.getElementById('m-' + i);
+            marker.style.left = (225 + 130 * Math.cos(angle) - 12) + 'px';
+            marker.style.top = (225 + 130 * Math.sin(angle) - 12) + 'px';
         });
 
-        const renderRow = (scale, types, rowId, label) => {
-            document.getElementById(rowId).innerHTML = scale.map((n, i) => {
-                const chordName = n + types[i];
-                const notes = getChordNotes(scale, i, types === majT ? 'tri' : 'quad');
-                return `<td onclick="addChord('${chordName}', ${JSON.stringify(notes)})">
-                    <span class="row-label">${label}</span>
-                    <span class="chord-name">${chordName}</span>
-                    <span class="chord-notes">${notes.join('-')}</span>
-                </td>`;
-            }).join('');
-        };
+        // Update Tabelle
+        document.getElementById('maj-title').innerText = "Scala di " + key.name + " Maggiore";
+        fillTable('maj-tri-row', key.notes, typesMajT, [0,2,4], "Triade");
+        fillTable('maj-quad-row', key.notes, typesMajQ, [0,2,4,6], "Quadriade");
 
-        renderRow(s.notes, majT, 'maj-tri', 'Triade');
-        renderRow(s.notes, majQ, 'maj-quad', 'Quadriade');
+        const minNotes = [...key.notes.slice(5), ...key.notes.slice(0, 5)];
+        const typesMinT = ["m", "°", "", "m", "m", "", ""];
+        const typesMinQ = ["m7", "m7b5", "maj7", "m7", "m7", "maj7", "7"];
         
-        const minN = [...s.notes.slice(5), ...s.notes.slice(0, 5)];
-        const minT = ["m", "°", "", "m", "m", "", ""];
-        const minQ = ["m7", "m7b5", "maj7", "m7", "m7", "maj7", "7"];
-        
-        renderRow(minN, minT, 'min-tri', 'Triade');
-        renderRow(minN, minQ, 'min-quad', 'Quadriade');
+        document.getElementById('min-title').innerText = "Scala di " + data[(idx+9)%12].name + " Minore Naturale";
+        fillTable('min-tri-row', minNotes, typesMinT, [0,2,4], "Triade");
+        fillTable('min-quad-row', minNotes, typesMinQ, [0,2,4,6], "Quadriade");
+    }
 
-        // Avanzata (semplificata per brevità)
-        const v5 = s.notes[4] + "7";
-        document.getElementById('adv-row').innerHTML = `<td onclick="addChord('${v5}', [])">V/I (${v5})</td><td>Sost. Tritono</td><td>iv min</td>`;
+    function fillTable(rowId, scale, types, intervals, label) {
+        const row = document.getElementById(rowId);
+        row.innerHTML = '';
+        scale.forEach((root, i) => {
+            const chordNotes = intervals.map(inter => scale[(i + inter) % 7]);
+            const chordName = root + types[i];
+            const td = document.createElement('td');
+            td.innerHTML = `<span class="ch-label">${label}</span><span class="ch-name">${chordName}</span><span class="ch-notes">${chordNotes.join('-')}</span>`;
+            td.onclick = () => {
+                playChord(chordNotes);
+                addChord(chordName, chordNotes);
+            };
+            row.appendChild(td);
+        });
     }
 
     function addChord(name, notes) {
         progression.push({name, notes});
-        const d = document.getElementById('prog-display');
-        const c = document.createElement('div');
-        c.className = 'prog-chord';
-        c.innerText = name;
-        d.appendChild(c);
-        playChordAudio(notes);
+        const disp = document.getElementById('prog-display');
+        const div = document.createElement('div');
+        div.className = 'chord-box';
+        div.innerText = name;
+        disp.appendChild(div);
     }
 
     function playProgression() {
-        progression.forEach((c, i) => {
-            setTimeout(() => playChordAudio(c.notes), i * 1200);
+        if (progression.length === 0) return;
+        progression.forEach((item, i) => {
+            setTimeout(() => playChord(item.notes), i * 1000);
         });
     }
 
@@ -212,20 +246,8 @@
         document.getElementById('prog-display').innerHTML = '';
     }
 
-    function init() {
-        data.forEach((item, i) => {
-            const angle = (i * 30 - 90) * (Math.PI / 180);
-            const btn = document.createElement('div');
-            btn.className = 'note-btn';
-            btn.style.left = (220 + 175 * Math.cos(angle)) + 'px';
-            btn.style.top = (220 + 175 * Math.sin(angle)) + 'px';
-            btn.innerHTML = `<b>${item.maj}</b>`;
-            btn.onclick = () => update(i);
-            document.getElementById('circle').appendChild(btn);
-        });
-        update(0);
-    }
     init();
 </script>
+
 </body>
 </html>
