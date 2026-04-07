@@ -3,220 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle of Fifths Pro + Real Chords</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tonaljs/tonal/browser/tonal.min.js"></script>
+    <title>Circolo delle Quinte - Pro</title>
     <style>
         :root {
             --primary-green: #66bb6a;
             --dark-gray: #424242;
             --accent-gold: #ffca28;
-            --bg-light: #f8f9fa;
+            --bg-light: #f1f3f4;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-light); color: #333; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-light); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .main-container { width: 100%; max-width: 900px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px-35px rgba(0,0,0,0.1); }
         
-        .main-container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--dark-gray); margin-bottom: 50px; }
 
-        /* Circolo delle Quinte */
-        .circle-wrapper { position: relative; width: 450px; height: 450px; margin: 20px auto; }
+        /* CIRCOLO */
+        .circle-wrapper { position: relative; width: 500px; height: 500px; margin: 0 auto 40px auto; }
         
-        /* Contenitore Segni in Chiave (Sopra ogni nota) */
-        .staff-display {
-            position: absolute;
-            width: 80px; height: 60px;
-            margin-left: -40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            z-index: 1;
+        /* Pentagramma SVG integrato */
+        .staff-box {
+            position: absolute; width: 60px; height: 45px; margin-left: -30px;
+            display: flex; flex-direction: column; align-items: center; pointer-events: none;
         }
-        /* Pentagramma simulato usando un SVG reale per la chiave di violino */
-        .staff-display img { width: 40px; height: 35px; opacity: 0.8; }
-        /* Il testo con il numero di diesis/bemolle */
-        .key-signature-text { font-size: 1.2em; font-family: "serif"; font-weight: bold; color: #555; height: 1.2em; }
+        .staff-lines { width: 40px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; height: 12px; margin-bottom: 2px; position: relative;}
+        .staff-lines::after { content: ''; position: absolute; top: 50%; width: 100%; border-top: 1px solid #ccc; }
+        .sig-text { font-family: serif; font-weight: bold; font-size: 1.1em; color: #444; }
 
         /* Bottoni Nota */
         .note-btn {
-            position: absolute;
-            width: 70px; height: 70px;
-            margin: -35px; border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; z-index: 2;
-            background: var(--primary-green); color: white; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: absolute; width: 80px; height: 80px; margin: -40px;
+            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--primary-green); color: white; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 2;
         }
-        .note-btn span.minor { font-size: 0.75em; opacity: 0.9; font-weight: normal; }
-        .note-btn.active { background: var(--dark-gray); transform: scale(1.1); z-index: 5; }
+        .note-btn b { font-size: 1.3em; }
+        .note-btn span { font-size: 0.8em; font-weight: normal; opacity: 0.9; }
+        .note-btn.active { background: var(--dark-gray); transform: scale(1.15); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
-        /* Gradi della Scala (Pallini gialli I, ii, iii...) */
+        /* Gradi Gialli */
         .degree-marker {
-            position: absolute; width: 24px; height: 24px;
-            background: var(--accent-gold); border-radius: 50%;
-            font-size: 11px; font-weight: bold; color: white;
+            position: absolute; width: 28px; height: 28px; background: var(--accent-gold);
+            border-radius: 50%; font-size: 11px; font-weight: bold; color: white;
             display: flex; align-items: center; justify-content: center;
-            z-index: 10; pointer-events: none; transition: 0.5s ease-in-out;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            z-index: 10; pointer-events: none; transition: all 0.5s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white;
         }
 
-        /* Tabelle Armonizzazione */
-        .tables-section { margin-top: 30px; display: grid; gap: 20px; }
-        .table-card { border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
-        .table-header { background: #f0f0f0; padding: 10px; font-weight: bold; font-size: 0.9em; text-align: center;}
-        
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border: 1px solid #eee; padding: 12px; text-align: center; width: 14%; }
-        th { font-size: 0.8em; color: #666; font-weight: normal;}
-        .chord-name { font-weight: bold; color: #2c3e50; font-size: 1.1em;}
+        /* TABELLE */
+        .card { border: 1px solid #e0e0e0; border-radius: 12px; margin-bottom: 20px; overflow: hidden; background: #fff; }
+        .card-header { background: #f8f9fa; padding: 15px; font-weight: bold; font-size: 1.1em; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #fafafa; color: #888; font-size: 0.8em; padding: 10px; border-bottom: 1px solid #eee; text-transform: uppercase; }
+        td { padding: 20px; text-align: center; border-bottom: 1px solid #eee; font-weight: bold; font-size: 1.2em; color: var(--dark-gray); width: 14.2%; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <h1>Circle of Fifths Pro + Real Chords</h1>
+    <h1>Circle of Fifths Interactive</h1>
     
     <div class="circle-wrapper" id="circle">
-        </div>
+        <div id="deg-0" class="degree-marker">I</div>
+        <div id="deg-1" class="degree-marker">ii</div>
+        <div id="deg-2" class="degree-marker">iii</div>
+        <div id="deg-3" class="degree-marker">IV</div>
+        <div id="deg-4" class="degree-marker">V</div>
+        <div id="deg-5" class="degree-marker">vi</div>
+        <div id="deg-6" class="degree-marker">vii°</div>
+    </div>
 
-    <div class="tables-section">
-        <div class="table-card">
-            <div class="table-header" id="label-maj">Seleziona una nota</div>
-            <table>
-                <thead><tr><th>I</th><th>ii</th><th>iii</th><th>IV</th><th>V</th><th>vi</th><th>vii°</th></tr></thead>
-                <tbody id="row-maj"></tbody>
-            </table>
-        </div>
+    <div class="card">
+        <div class="card-header" id="maj-title">Armonizzazione Maggiore</div>
+        <table>
+            <thead><tr><th>I</th><th>ii</th><th>iii</th><th>IV</th><th>V</th><th>vi</th><th>vii°</th></tr></thead>
+            <tbody id="maj-body"><tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody>
+        </table>
+    </div>
 
-        <div class="table-card">
-            <div class="table-header" id="label-min">--</div>
-            <table>
-                <thead><tr><th>i</th><th>ii°</th><th>III</th><th>iv</th><th>v</th><th>VI</th><th>VII</th></tr></thead>
-                <tbody id="row-min"></tbody>
-            </table>
-        </div>
+    <div class="card">
+        <div class="card-header" id="min-title">Armonizzazione Minore Naturale</div>
+        <table>
+            <thead><tr><th>i</th><th>ii°</th><th>III</th><th>iv</th><th>v</th><th>VI</th><th>VII</th></tr></thead>
+            <tbody id="min-body"><tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    // Dati di base per il circolo delle quinte (ordine orario da Do)
-    const circleKeys = [
-        { maj: "C", min: "Am", sig: "" },
-        { maj: "G", min: "Em", sig: "1♯" },
-        { maj: "D", min: "Bm", sig: "2♯" },
-        { maj: "A", min: "F♯m", sig: "3♯" },
-        { maj: "E", min: "C♯m", sig: "4♯" },
-        { maj: "B", min: "G♯m", sig: "5♯" },
-        { maj: "G♭", min: "E♭m", sig: "6♭" },
-        { maj: "D♭", min: "B♭m", sig: "5♭" },
-        { maj: "A♭", min: "Fm", sig: "4♭" },
-        { maj: "E♭", min: "Cm", sig: "3♭" },
-        { maj: "B♭", min: "Gm", sig: "2♭" },
-        { maj: "F", min: "Dm", sig: "1♭" }
+    // Database note: maj, min, sig, scale_notes (per armonizzazione)
+    const data = [
+        { maj: "C", min: "Am", sig: "", notes: ["C","D","E","F","G","A","B"] },
+        { maj: "G", min: "Em", sig: "1♯", notes: ["G","A","B","C","D","E","F♯"] },
+        { maj: "D", min: "Bm", sig: "2♯", notes: ["D","E","F♯","G","A","B","C♯"] },
+        { maj: "A", min: "F♯m", sig: "3♯", notes: ["A","B","C♯","D","E","F♯","G♯"] },
+        { maj: "E", min: "C♯m", sig: "4♯", notes: ["E","F♯","G♯","A","B","C♯","D♯"] },
+        { maj: "B", min: "G♯m", sig: "5♯", notes: ["B","C♯","D♯","E","F♯","G♯","A♯"] },
+        { maj: "G♭", min: "E♭m", sig: "6♭", notes: ["G♭","A♭","B♭","C♭","D♭","E♭","F"] },
+        { maj: "D♭", min: "B♭m", sig: "5♭", notes: ["D♭","E♭","F","G♭","A♭","B♭","C"] },
+        { maj: "A♭", min: "Fm", sig: "4♭", notes: ["A♭","B♭","C","D♭","E♭","F","G"] },
+        { maj: "E♭", min: "Cm", sig: "3♭", notes: ["E♭","F","G","A♭","B♭","C","D"] },
+        { maj: "B♭", min: "Gm", sig: "2♭", notes: ["B♭","C","D","E♭","F","G","A"] },
+        { maj: "F", min: "Dm", sig: "1♭", notes: ["F","G","A","B♭","C","D","E"] }
     ];
-
-    // Nomi dei gradi (servono solo per i pallini gialli)
-    const majDegreeNames = ["I", "ii", "iii", "IV", "V", "vi", "vii°"];
-    
-    // URL di un'immagine SVG pubblica per una chiave di violino
-    const trebleClefUrl = "https://upload.wikimedia.org/wikipedia/commons/1/18/G_Clef.svg";
 
     const circle = document.getElementById('circle');
 
-    // --- 1. Generazione del Circolo e Pentagrammi ---
-    circleKeys.forEach((item, i) => {
+    // Creazione elementi grafici
+    data.forEach((item, i) => {
         const angle = (i * 30 - 90) * (Math.PI / 180);
-        const r = 160; // Raggio bottoni
-        const x = 225 + r * Math.cos(angle);
-        const y = 225 + r * Math.sin(angle);
+        const x = 250 + 180 * Math.cos(angle);
+        const y = 250 + 180 * Math.sin(angle);
 
-        // Contenitore Pentagramma/Segni in Chiave (Sopra la nota)
+        // Pentagramma stilizzato
         const staff = document.createElement('div');
-        staff.className = 'staff-display';
-        staff.style.left = x + 'px';
-        staff.style.top = (y - 85) + 'px'; // Posizionato più in alto
-        staff.innerHTML = `<img src="${trebleClefUrl}" alt="Treble Clef"><span class="key-signature-text">${item.sig}</span>`;
+        staff.className = 'staff-box';
+        staff.style.left = x + 'px'; staff.style.top = (y - 85) + 'px';
+        staff.innerHTML = `<div class="staff-lines"></div><span class="sig-text">${item.sig}</span>`;
         circle.appendChild(staff);
 
         // Bottone Nota
         const btn = document.createElement('div');
         btn.className = 'note-btn';
-        btn.style.left = x + 'px';
-        btn.style.top = y + 'px';
-        btn.innerHTML = `<b>${item.maj}</b><span class="minor">${item.min}</span>`;
-        btn.onclick = () => selectKey(i);
-        btn.id = `note-${i}`;
+        btn.style.left = x + 'px'; btn.style.top = y + 'px';
+        btn.innerHTML = `<b>${item.maj}</b><span>${item.min}</span>`;
+        btn.onclick = () => update(i);
+        btn.id = `btn-${i}`;
         circle.appendChild(btn);
     });
 
-    // --- 2. Inserimento dei Marker dei Gradi (Pallini Gialli) ---
-    majDegreeNames.forEach((name, i) => {
-        const dot = document.createElement('div');
-        dot.className = 'degree-marker';
-        dot.id = `deg-${i}`;
-        dot.innerText = name;
-        circle.appendChild(dot);
-    });
+    function update(idx) {
+        const selected = data[idx];
 
-    // --- 3. Logica di Aggiornamento Interattivo ---
-    function selectKey(index) {
-        const selected = circleKeys[index];
-        
-        // Evidenzia la nota selezionata
+        // 1. Attiva bottone
         document.querySelectorAll('.note-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`note-${index}`).classList.add('active');
+        document.getElementById(`btn-${idx}`).classList.add('active');
 
-        // --- 4. Riposizionamento dei Gradi Gialli ---
-        // L'offset ci dice quanti passi nel circolo delle quinte (C, G, D...)
-        // dobbiamo fare per trovare i gradi (I, ii, iii...).
-        // Per Maj: I=0, ii=+2, iii=+4, IV=-1, V=+1, vi=+3, vii°=+5.
-        const degreeOffsets = [0, 2, 4, -1, 1, 3, 5]; 
-        degreeOffsets.forEach((offset, i) => {
-            const pos = (index + offset + 12) % 12; // Modulo 12 per il cerchio
+        // 2. Sposta Gradi Gialli (Offset fissi nel circolo delle quinte)
+        const offsets = [0, 2, 4, -1, 1, 3, 5]; 
+        offsets.forEach((offset, i) => {
+            const pos = (idx + offset + 12) % 12;
             const angle = (pos * 30 - 90) * (Math.PI / 180);
-            const rDot = 115; // Raggio interno per i pallini gialli
+            const r = 125;
             const dot = document.getElementById(`deg-${i}`);
-            // Centra il pallino (-12px per un pallino di 24px)
-            dot.style.left = (225 + rDot * Math.cos(angle) - 12) + 'px';
-            dot.style.top = (225 + rDot * Math.sin(angle) - 12) + 'px';
+            dot.style.left = (250 + r * Math.cos(angle) - 14) + 'px';
+            dot.style.top = (250 + r * Math.sin(angle) - 14) + 'px';
         });
 
-        // --- 5. Armonizzazione Reale delle Scale con Tonal.js ---
-        // Pulisci i nomi per Tonal (es. "F♯" -> "F#")
-        const cleanMajRoot = selected.maj.replace('♭', 'b').replace('♯', '#');
-        const cleanMinRoot = selected.min.replace('♭', 'b').replace('♯', '#').replace('m', '');
+        // 3. Calcola Accordi Maggiore
+        const majTypes = ["", "m", "m", "", "", "m", "°"];
+        const majChords = selected.notes.map((n, i) => n + majTypes[i]);
+        document.getElementById('maj-title').innerText = `Armonizzazione di ${selected.maj} Maggiore`;
+        document.getElementById('maj-body').innerHTML = `<tr>${majChords.map(c => `<td>${c}</td>`).join('')}</tr>`;
 
-        updateRealChordsTable(cleanMajRoot, 'major', 'row-maj', 'label-maj');
-        updateRealChordsTable(cleanMinRoot, 'aeolian', 'row-min', 'label-min');
+        // 4. Calcola Accordi Minore Naturale (stesse note, ma partendo dal vi grado)
+        const minNotes = [...selected.notes.slice(5), ...selected.notes.slice(0, 5)];
+        const minTypes = ["m", "°", "", "m", "m", "", ""];
+        const minChords = minNotes.map((n, i) => n + minTypes[i]);
+        document.getElementById('min-title').innerText = `Armonizzazione di ${selected.min} Naturale`;
+        document.getElementById('min-body').innerHTML = `<tr>${minChords.map(c => `<td>${c}</td>`).join('')}</tr>`;
     }
 
-    // Funzione principale per generare e mostrare gli accordi reali
-    function updateRealChordsTable(root, scaleType, tableId, labelId) {
-        // Tonal.js: Ottieni i nomi delle note della scala
-        const scaleNotes = Tonal.Scale.get(`${root} ${scaleType}`).notes;
-        
-        // Tonal.js: Calcola gli accordi per ogni nota (armonizzazione per triadi)
-        const chords = scaleNotes.map((note, i) => {
-            // Per il vii° grado della maggiore o ii° della minore, serve un accordo diminuito
-            let isDim = false;
-            if((scaleType === 'major' && i === 6) || (scaleType === 'aeolian' && i === 1)) {
-                isDim = true;
-            }
-            // Trova gli intervalli per creare la triade
-            const intervals = isDim ? ["1P", "3m", "5d"] : ["1P", "3M", "5P"];
-            // Genera l'accordo reale
-            return Tonal.Chord.get(`${note} ${intervals.join(',')}`).name;
-        });
-
-        // Aggiorna l'etichetta del titolo
-        const typeDisplay = scaleType === 'major' ? 'Maggiore' : 'Minore Naturale';
-        document.getElementById(labelId).innerText = `Armonizzazione di ${Tonal.Note.get(root).name} ${typeDisplay}`;
-
-        // Genera l'HTML della riga con i nomi corretti degli accordi
-        const html = chords.map(c => `<td><span class="chord-name">${c}</span></td>`).join('');
-        document.getElementById(tableId).innerHTML = `<tr>${html}</tr>`;
-    }
-
-    // Default iniziale: Do Maggiore
-    selectKey(0);
+    // Inizio automatico su Do
+    update(0);
 </script>
 
 </body>
